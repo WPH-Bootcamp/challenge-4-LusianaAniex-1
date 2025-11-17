@@ -1,63 +1,140 @@
-/**
- * Class Student
- * Representasi dari seorang siswa dengan data dan nilai-nilainya
- * 
- * TODO: Implementasikan class Student dengan:
- * - Constructor untuk inisialisasi properti (id, name, class, grades)
- * - Method addGrade(subject, score) untuk menambah nilai mata pelajaran
- * - Method getAverage() untuk menghitung rata-rata nilai
- * - Method getGradeStatus() untuk menentukan status Lulus/Tidak Lulus
- * - Method displayInfo() untuk menampilkan informasi siswa
- * 
- * Kriteria Lulus: rata-rata >= 75
- */
-
 class Student {
-  // TODO: Implementasikan constructor
-  // Properti yang dibutuhkan:
-  // - id: ID unik siswa
-  // - name: Nama siswa
-  // - class: Kelas siswa
-  // - grades: Object untuk menyimpan nilai {subject: score}
-  
-  constructor(id, name, studentClass) {
-    // Implementasi constructor di sini
+  #id;
+  #name;
+  #className;
+  #grades;
+
+  constructor(id, name, className) {
+    this.#validateInput(id, name, className);
+
+    this.#id = id;
+    this.#name = name;
+    this.#className = className;
+    this.#grades = {};
   }
 
-  /**
-   * Menambah atau update nilai mata pelajaran
-   * @param {string} subject - Nama mata pelajaran
-   * @param {number} score - Nilai (0-100)
-   * TODO: Validasi bahwa score harus antara 0-100
-   */
+  // Private method for input validation
+  #validateInput(id, name, className) {
+    if (!id || typeof id !== 'string') {
+      throw new Error('ID must be a non-empty string');
+    }
+    if (!name || typeof name !== 'string' || name.trim().length === 0) {
+      throw new Error('Name must be a non-empty string');
+    }
+    if (
+      !className ||
+      typeof className !== 'string' ||
+      className.trim().length === 0
+    ) {
+      throw new Error('Class name must be a non-empty string');
+    }
+  }
+
+  // Public methods
   addGrade(subject, score) {
-    // Implementasi method di sini
+    if (
+      !subject ||
+      typeof subject !== 'string' ||
+      subject.trim().length === 0
+    ) {
+      throw new Error('Subject must be a non-empty string');
+    }
+    if (typeof score !== 'number' || score < 0 || score > 100) {
+      throw new Error('Score must be a number between 0 and 100');
+    }
+
+    this.#grades[subject] = score;
+    return `Grade ${score} for ${subject} added successfully`;
   }
 
-  /**
-   * Menghitung rata-rata nilai dari semua mata pelajaran
-   * @returns {number} Rata-rata nilai
-   * TODO: Hitung total nilai dibagi jumlah mata pelajaran
-   */
   getAverage() {
-    // Implementasi method di sini
+    const subjects = Object.keys(this.#grades);
+    if (subjects.length === 0) {
+      return 0;
+    }
+
+    const total = subjects.reduce(
+      (sum, subject) => sum + this.#grades[subject],
+      0
+    );
+    return parseFloat((total / subjects.length).toFixed(2));
   }
 
-  /**
-   * Menentukan status kelulusan siswa
-   * @returns {string} "Lulus" atau "Tidak Lulus"
-   * TODO: Return "Lulus" jika rata-rata >= 75, selain itu "Tidak Lulus"
-   */
   getGradeStatus() {
-    // Implementasi method di sini
+    const average = this.getAverage();
+    return average >= 75 ? 'Lulus' : 'Tidak Lulus';
   }
 
-  /**
-   * Menampilkan informasi lengkap siswa
-   * TODO: Tampilkan ID, Nama, Kelas, semua nilai, rata-rata, dan status
-   */
   displayInfo() {
-    // Implementasi method di sini
+    const subjects = Object.keys(this.#grades);
+    let info = `ID: ${this.#id}\n`;
+    info += `Nama: ${this.#name}\n`;
+    info += `Kelas: ${this.#className}\n`;
+
+    if (subjects.length > 0) {
+      info += `Mata Pelajaran:\n`;
+      subjects.forEach((subject) => {
+        info += `  - ${subject}: ${this.#grades[subject]}\n`;
+      });
+      info += `Rata-rata: ${this.getAverage()}\n`;
+      info += `Status: ${this.getGradeStatus()}\n`;
+    } else {
+      info += `Belum ada nilai yang dimasukkan\n`;
+    }
+
+    return info;
+  }
+
+  // Getters
+  getId() {
+    return this.#id;
+  }
+  getName() {
+    return this.#name;
+  }
+  getClassName() {
+    return this.#className;
+  }
+  getGrades() {
+    return { ...this.#grades };
+  }
+
+  // Setters with validation
+  setName(name) {
+    if (!name || typeof name !== 'string' || name.trim().length === 0) {
+      throw new Error('Name must be a non-empty string');
+    }
+    this.#name = name;
+  }
+
+  setClassName(className) {
+    if (
+      !className ||
+      typeof className !== 'string' ||
+      className.trim().length === 0
+    ) {
+      throw new Error('Class name must be a non-empty string');
+    }
+    this.#className = className;
+  }
+
+  // For JSON serialization
+  toJSON() {
+    return {
+      id: this.#id,
+      name: this.#name,
+      className: this.#className,
+      grades: this.#grades,
+    };
+  }
+
+  // Static method to create from JSON
+  static fromJSON(data) {
+    const student = new Student(data.id, data.name, data.className);
+    Object.keys(data.grades || {}).forEach((subject) => {
+      student.addGrade(subject, data.grades[subject]);
+    });
+    return student;
   }
 }
 

@@ -6,16 +6,23 @@
   "type": "module",
   "scripts": {
     "start": "node index.js",
+    "dev": "node --watch index.js",
+    "win": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "student",
     "management",
     "cli",
-    "oop"
+    "oop",
+    "javascript",
+    "education"
   ],
-  "author": "",
-  "license": "ISC",
+  "author": "Lusiana Susanto",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
   "dependencies": {
     "readline-sync": "^1.4.10"
   }
