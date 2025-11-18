@@ -14,13 +14,11 @@ class StudentManager {
   constructor(dataFile = '../data/students.json') {
     this.#students = new Map();
     this.#dataFile = path.join(__dirname, dataFile);
-    console.log(`📁 Data file: ${this.#dataFile}`);
   }
 
   // Data persistence methods
   async loadData() {
     try {
-      console.log('🔍 Mencari file data...');
       const data = await fs.readFile(this.#dataFile, 'utf8');
 
       // Cek jika file kosong
@@ -33,7 +31,7 @@ class StudentManager {
 
       // Cek jika tidak ada data siswa
       if (studentsData.length === 0) {
-        console.log('ℹ️  Tidak ada data siswa, mulai dengan data kosong.');
+        console.log('ℹ️  Tidak ada data siswa');
         return;
       }
 
@@ -41,8 +39,6 @@ class StudentManager {
         const student = Student.fromJSON(studentData);
         this.#students.set(student.getId(), student);
       });
-
-      console.log(`✅ Data berhasil dimuat (${studentsData.length} siswa)`);
     } catch (error) {
       // If file doesn't exist, start with empty data
       if (error.code === 'ENOENT') {
@@ -63,7 +59,7 @@ class StudentManager {
         student.toJSON()
       );
 
-      // Buat folder jika belum ada
+      // Buat folder data jika belum ada
       const dataDir = path.dirname(this.#dataFile);
       await fs.mkdir(dataDir, { recursive: true });
 
