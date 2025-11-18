@@ -15,19 +15,31 @@ class Student {
 
   // Private method for input validation
   #validateInput(id, name, className) {
-    if (!id || typeof id !== 'string') {
-      throw new Error('ID must be a non-empty string');
+    if (!this.#isValidId(id)) {
+      throw new Error(
+        'ID harus alphanumeric dan 3-10 karakter. Contoh: S001, STUDENT123'
+      );
     }
-    if (!name || typeof name !== 'string' || name.trim().length === 0) {
-      throw new Error('Name must be a non-empty string');
+    if (!this.#isValidName(name)) {
+      throw new Error(
+        'Nama harus 2-50 karakter dan hanya mengandung huruf dan spasi'
+      );
     }
-    if (
-      !className ||
-      typeof className !== 'string' ||
-      className.trim().length === 0
-    ) {
-      throw new Error('Class name must be a non-empty string');
+    if (!this.#isValidClassName(className)) {
+      throw new Error('Format kelas: [1-12][A-Z]. Contoh: 10A, 11B, 12C');
     }
+  }
+
+  #isValidId(id) {
+    return /^[A-Z0-9]{3,10}$/.test(id);
+  }
+
+  #isValidName(name) {
+    return /^[A-Za-z\s]{2,50}$/.test(name) && name.trim().length >= 2;
+  }
+
+  #isValidClassName(className) {
+    return /^[1-9][0-2]?[A-Z]$/.test(className);
   }
 
   // Public methods
