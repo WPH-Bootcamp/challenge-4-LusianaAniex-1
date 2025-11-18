@@ -19,7 +19,7 @@
     "education"
   ],
   "author": "Lusiana Susanto",
-  "license": "MIT",
+  "license": "ISC",
   "engines": {
     "node": ">=14.0.0"
   },

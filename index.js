@@ -23,7 +23,8 @@ function displayMenu() {
   console.log('5. Hapus Siswa');
   console.log('6. Tambah Nilai Siswa');
   console.log('7. Lihat Top 3 Siswa');
-  console.log('8. Keluar');
+  console.log('8. Statistik Kelas');
+  console.log('9. Keluar');
   console.log('=================================');
 }
 
@@ -254,6 +255,26 @@ function viewTopStudents() {
     console.log('⭐'.repeat(20));
   });
 }
+// Handler untuk melihat statistik kelas
+function viewClassStatistics() {
+  console.log('\n--- Statistik Kelas ---');
+
+  const stats = manager.getClassStatistics();
+
+  if (Object.keys(stats).length === 0) {
+    console.log('📊 Tidak ada data statistik.');
+    return;
+  }
+
+  Object.keys(stats).forEach((className) => {
+    const classStat = stats[className];
+    console.log(`\n📈 Kelas: ${className}`);
+    console.log(`   Jumlah Siswa: ${classStat.count}`);
+    console.log(`   Rata-rata Kelas: ${classStat.average}`);
+    console.log(`   Lulus: ${classStat.passed}`);
+    console.log(`   Tidak Lulus: ${classStat.failed}`);
+  });
+}
 
 /**
  * Utility function untuk membersihkan console
@@ -303,6 +324,9 @@ async function main() {
         viewTopStudents();
         break;
       case '8':
+        viewClassStatistics();
+        break;
+      case '9': 
         console.log('\n💾 Menyimpan data...');
         await manager.saveData();
         running = false;
