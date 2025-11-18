@@ -26,8 +26,9 @@ const theme = {
  * Utility untuk membuat border
  */
 function createBox(title, width = 40) {
-  const border = '═'.repeat(width);
-
+  const border = '='.repeat(width);
+  // Remove emojis for consistent centering
+  const cleanTitle = title.replace(/[🎯🔍✏️📊🏆📈👥🗑️]/g, '').trim();
   // Pre-calculated centered titles untuk konsistensi
   const centeredTitles = {
     'HAPUS SISWA': '         HAPUS SISWA         ',
@@ -41,9 +42,8 @@ function createBox(title, width = 40) {
     'SISTEM MANAJEMEN NILAI SISWA': 'SISTEM MANAJEMEN NILAI SISWA',
   };
 
-  const centeredTitle = centeredTitles[title] || title;
+  const centeredTitle = centeredTitles[cleanTitle] || cleanTitle;
 
-  // Gunakan karakter ASCII saja
   return `+${border}+\n|${centeredTitle}|\n+${border}+`;
 }
 
@@ -68,14 +68,14 @@ function displayMenu() {
   console.log(theme.menu('7. Lihat Top 3 Siswa'));
   console.log(theme.menu('8. Statistik Kelas'));
   console.log(theme.menu('9. Keluar & Simpan'));
-  console.log(theme.border('═'.repeat(44)));
+  console.log(theme.border('='.repeat(44)));
 }
 
 /**
  * Handler untuk menambah siswa baru
  */
 async function addNewStudent() {
-  console.log(theme.border(createBox('🎯 TAMBAH SISWA BARU', 30)));
+  console.log(theme.border(createBox(' TAMBAH SISWA BARU', 30)));
 
   try {
     const id = readlineSync.question(theme.highlight('Masukkan ID Siswa: '));
@@ -122,7 +122,7 @@ function viewAllStudents() {
     console.log(theme.highlight(`Siswa #${index + 1}`));
     console.log(displayStudentWithColor(student));
     console.log(statusColor(`Status: ${status}`));
-    console.log(theme.border('─'.repeat(50)));
+    console.log(theme.border('-'.repeat(50)));
   });
 }
 
@@ -154,7 +154,7 @@ function displayStudentWithColor(student) {
  * Handler untuk mencari siswa berdasarkan ID
  */
 function searchStudent() {
-  console.log(theme.border(createBox('🔍 CARI SISWA', 24)));
+  console.log(theme.border(createBox(' CARI SISWA', 24)));
   const id = readlineSync.question(
     theme.highlight('Masukkan ID Siswa yang dicari: ')
   );
@@ -182,7 +182,7 @@ function searchStudent() {
  * Handler untuk update data siswa
  */
 async function updateStudent() {
-  console.log(theme.border(createBox('✏️ UPDATE DATA SISWA', 30)));
+  console.log(theme.border(createBox(' UPDATE DATA SISWA', 30)));
 
   const id = readlineSync.question(
     theme.highlight('Masukkan ID Siswa yang akan diupdate: ')
@@ -275,7 +275,7 @@ async function deleteStudent() {
  * Handler untuk menambah nilai siswa
  */
 async function addGradeToStudent() {
-  console.log(theme.border(createBox('📊 TAMBAH NILAI SISWA', 32)));
+  console.log(theme.border(createBox(' TAMBAH NILAI SISWA', 32)));
   const id = readlineSync.question(theme.highlight('Masukkan ID Siswa: '));
 
   if (!id) {
@@ -325,7 +325,7 @@ async function addGradeToStudent() {
  * Handler untuk melihat top students
  */
 function viewTopStudents() {
-  console.log(theme.border(createBox('🏆 TOP 3 SISWA TERBAIK', 34)));
+  console.log(theme.border(createBox(' TOP 3 SISWA TERBAIK', 34)));
 
   const topStudents = manager.getTopStudents(3);
 
@@ -334,7 +334,7 @@ function viewTopStudents() {
     return;
   }
 
-  console.log(theme.title('🏆 SISWA TERBAIK BERDASARKAN NILAI RATA-RATA:\n'));
+  console.log(theme.info('🏆 SISWA TERBAIK BERDASARKAN NILAI RATA-RATA:\n'));
 
   topStudents.forEach((student, index) => {
     const rank = index + 1;
@@ -363,12 +363,12 @@ function viewTopStudents() {
 
     const statusColor = status === 'Lulus' ? theme.success : theme.error;
     console.log(statusColor(`🎓 Status: ${status}`));
-    console.log(theme.border('⭐'.repeat(40)));
+    console.log(theme.border('+'.repeat(40)));
   });
 }
 // Handler untuk melihat statistik kelas
 function viewClassStatistics() {
-  console.log(theme.border(createBox('📈 STATISTIK KELAS', 28)));
+  console.log(theme.border(createBox(' STATISTIK KELAS', 28)));
 
   const stats = manager.getClassStatistics();
 
@@ -395,7 +395,7 @@ function viewClassStatistics() {
       const passPercentage = (classStat.passed / total) * 100;
       const barLength = 20;
       const filled = Math.round((passPercentage / 100) * barLength);
-      const bar = '█'.repeat(filled) + '░'.repeat(barLength - filled);
+      const bar = '#'.repeat(filled) + '-'.repeat(barLength - filled);
       const percentageColor =
         passPercentage >= 75
           ? theme.success
@@ -467,7 +467,7 @@ async function main() {
         await deleteStudent();
         break;
       case '6':
-        addGradeToStudent();
+        await addGradeToStudent();
         break;
       case '7':
         viewTopStudents();
@@ -481,7 +481,7 @@ async function main() {
         running = false;
         break;
       default:
-        console.log('❌ Pilihan tidak valid! Silakan pilih 1-9.');
+        console.log(theme.error('❌ Pilihan tidak valid! Silakan pilih 1-9.'));
         break;
     }
 
